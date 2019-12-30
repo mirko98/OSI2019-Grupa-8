@@ -1,162 +1,4 @@
-int mm_dd[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-struct EVENT{
-    char name[100];
-    char description[1000];
-    char type[100];
-    char location[100];
-    char comment[100][1000];
-    int dd;
-    int mm;
-    int yy;
-    int mi;
-    int hh;
-
-    time_t tt;
-    tm TM;
-
-    /*------ INICIJALIZUJEMO TM ------*/
-    EVENT(){
-        time(&tt);
-        TM = *localtime(&tt);
-    }
-
-    /*------ VRACA DANASNJU GODINU ------*/
-    int current_year(){
-        return (int)TM.tm_year + 1900;
-    }
-
-    /*------ VRACA DANASNJI MJESEC ------*/
-    int current_month(){
-        return (int)TM.tm_mon + 1;
-    }
-
-    /*------ VRACA DANASNJI DAN ------*/
-    int current_day(){
-        return (int)TM.tm_mday;
-    }
-
-    /*------ PROVJERA DANA ------*/
-    bool flag_day(){
-        if ( dd <= 0 ){
-            return false;
-        }
-
-        if ( mm == 2 ){
-            if ( ( yy % 400 == 0 ) || ( yy % 100 != 0 && yy % 4 == 0 ) ){
-                if ( dd <= 29 ){
-                    return true;
-                }else{
-                    return false;
-                }
-            }else{
-                if ( dd <= 28 ){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-        }else{
-            if ( dd <= mm_dd[mm-1] ){
-                return true;
-            }else{
-                return false;
-            }
-        }
-    }
-
-    /*------ PROVJERA MJESECA ------*/
-    bool flag_month(){
-        if ( mm <= 12 && mm >= 1 ){
-            return true;
-        }
-
-        return false;
-    }
-
-    /*------ PROVJERA GODINE ------*/
-    bool flag_year(){
-        if ( abs(yy-current_year()) <= 5 ){
-            return true;
-        }
-
-        return false;
-    }
-
-    /*------ PROVJERA DATUMA(da li je datum buduci) ------*/
-    bool flag_date(){
-        int day = current_day();
-        int month = current_month();
-        int year = current_year();
-
-        if ( year == yy ){
-            if ( month == mm ){
-                if ( day >= dd ){
-                    return false;
-                }else{
-                    return true;
-                }
-            }else if ( month < mm ){
-                return true;
-            }else{
-                return false;
-            }
-        }else if ( year > yy ){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    /*------ PROVJERA MINUTA ------*/
-    bool flag_mi(){
-        if ( mi >= 0 && mi <= 59 ){
-            return true;
-        }
-
-        return false;
-    }
-
-    /*------ PROVJERA CASOVA ------*/
-    bool flag_hh(){
-        if ( hh >= 0 && hh <= 23 ){
-            return true;
-        }
-
-        return false;
-    }
-};
-
-/*------------- KONVERZIJA STRING-A U INT ---------------*/
-
-int convert_string(string &a){
-    int value = 0;
-    int inc = 1;
-    for (int i=a.length()-1;i>=0;i--){
-        if ( !isdigit(a[i]) ){
-            return -1;
-        }
-
-        value+=inc*(int)(a[i] - '0');
-        inc*=10;
-    }
-
-    return value;
-}
-
-/*------ ISPISUJE PORUKU ZA GRESKU(zavisno gdje je greska napravita) ------*/
-
-void print_text(string a){
-    if ( a.find("VRSTA") != string::npos || a.find("GODINA") != string::npos || a.find("LOKACIJA") != string::npos ){
-        a+=" KOJU STE UNIJELI NIJE VALIDNA.\nPOKUSAJTE PONOVO!!!\n\n";
-    }else{
-        a+=" KOJI STE UNIJELI NIJE VALIDAN.\nPOKUSAJTE PONOVO!!!\n\n";
-    }
-
-    cout<<a;
-}
-
-void add_event(){
+EVENT add_event(int type){
     /*------------ DEF. PROMJELJIVIH ------------*/
     string hh, mi;
     string dd, mm, yy;
@@ -174,7 +16,8 @@ void add_event(){
         }
 
         if ( naziv == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
     }while ( naziv.length() >= 101 || naziv.length() <= 2 );
     strcpy(new_event.name, naziv.c_str());
@@ -188,7 +31,8 @@ void add_event(){
         }
 
         if ( opis == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
     }while ( opis.length() >= 1001 || opis.length() <= 9 );
     strcpy(new_event.description, opis.c_str());
@@ -220,7 +64,8 @@ void add_event(){
         }
 
         if ( vrsta == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
     }while ( vrsta.length() <= 2 || vrsta.length() >= 101 || !flag[vrsta] );
     strcpy(new_event.type, vrsta.c_str());
@@ -234,7 +79,8 @@ void add_event(){
         }
 
         if ( lokacija == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
     }while ( lokacija.length() >= 101 || lokacija.length() <= 1 );
     strcpy(new_event.location, lokacija.c_str());
@@ -247,19 +93,22 @@ void add_event(){
         getline(cin, dd, '\n');
         new_event.dd = convert_string(dd);
         if ( dd == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
         cout<<"     - Mjesec: ";
         getline(cin, mm, '\n');
         new_event.mm = convert_string(mm);
         if ( mm == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
         cout<<"     - Godina: ";
         getline(cin, yy, '\n');
         new_event.yy = convert_string(yy);
         if ( yy == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
 
         if ( !new_event.flag_day() ){
@@ -286,13 +135,15 @@ void add_event(){
         getline(cin, hh, '\n');
         new_event.hh = convert_string(hh);
         if ( hh ==  "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
         cout<<"     - Minute: ";
         getline(cin, mi, '\n');
         new_event.mi = convert_string(mi);
         if ( mi == "EXIT" ){
-            return;
+            new_event.dd = -1;
+            return new_event;
         }
 
         if ( !new_event.flag_hh() ){
@@ -304,11 +155,21 @@ void add_event(){
         }
     }while ( !new_event.flag_hh() || !new_event.flag_mi() );
 
+    for (int i=0;i<100;i++){
+        new_event.comment[i][0] = '-';
+        new_event.comment[i][1] = '\0';
+    }
+
     /*------------ DODAVANJE DOGADJAJA U DATOTEKU ------------*/
-    fp = fopen("EVENT.dat", "ab");
 
-    cout<<"USPJESNO STE UNIJELI NOVI DOGADJAJ!!!"<<endl;
-    fwrite(&new_event, sizeof(EVENT), 1, fp);
+    if ( type ){
+        fp = fopen("EVENT.dat", "ab");
 
-    fclose(fp);
+        cout<<"USPJESNO STE UNIJELI NOVI DOGADJAJ!!!"<<endl;
+
+        fwrite(&new_event, sizeof(EVENT), 1, fp);
+        fclose(fp);
+    }
+
+    return new_event;
 }
