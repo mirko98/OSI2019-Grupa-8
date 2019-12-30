@@ -24,6 +24,7 @@ void input_comment(vector <EVENT> &niz){
     string comment;
     bool flag = false;
     do{
+        flag = false;
         cout<<"Unesite komentar: ";
         getline(cin, comment, '\n');
 
