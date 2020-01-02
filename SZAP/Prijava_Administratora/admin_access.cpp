@@ -2,7 +2,7 @@ bool admin_acess(){
     string name;
     char password[100];
     string pass_buff;
-    cout<<"Unesite sljdece stavke: "<<endl;
+    cout<<"Unesite sljedece stavke: "<<endl;
  
     do{
         cout<<"     - Ime: ";
