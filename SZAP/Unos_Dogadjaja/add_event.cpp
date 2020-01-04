@@ -11,12 +11,19 @@ EVENT add_event(int type){
         cout<<"Naziv: ";
         getline(cin, naziv, '\n');
 
+        if ( !type ){
+            if ( naziv == "-1" ){
+                naziv = "-1";
+                break;
+            }
+        }
+
         if ( naziv.length() >= 101 || naziv.length() <= 2 ){
             print_text("\nNAZIV");
         }
 
         if ( naziv == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
     }while ( naziv.length() >= 101 || naziv.length() <= 2 );
@@ -26,12 +33,20 @@ EVENT add_event(int type){
     do{
         cout<<"Opis: ";
         getline(cin, opis, '\n');
+
+        if ( !type ){
+            if ( opis == "-1" ){
+                opis = "-1";
+                break;
+            }
+        }
+
         if ( opis.length() >= 1001 || opis.length() <= 9 ){
             print_text("\nOPIS");
         }
 
         if ( opis == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
     }while ( opis.length() >= 1001 || opis.length() <= 9 );
@@ -59,12 +74,19 @@ EVENT add_event(int type){
         cout<<"     - Unesite vrstu: ";
         getline(cin, vrsta, '\n');
 
+        if ( !type ){
+            if ( vrsta == "-1" ){
+                vrsta = "-1";
+                break;
+            }
+        }
+
         if ( !flag[vrsta] ){
             print_text("\nVRSTA");
         }
 
         if ( vrsta == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
     }while ( vrsta.length() <= 2 || vrsta.length() >= 101 || !flag[vrsta] );
@@ -74,12 +96,20 @@ EVENT add_event(int type){
     do{
         cout<<"Lokacija: ";
         getline(cin, lokacija, '\n');
+
+        if ( !type ){
+            if ( lokacija == "-1" ){
+                lokacija = "-1";
+                break;
+            }
+        }
+
         if ( lokacija.length() >= 101 || lokacija.length() <= 1 ){
             print_text("\nLOKACIJA");
         }
 
         if ( lokacija == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
     }while ( lokacija.length() >= 101 || lokacija.length() <= 1 );
@@ -93,22 +123,27 @@ EVENT add_event(int type){
         getline(cin, dd, '\n');
         new_event.dd = convert_string(dd);
         if ( dd == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
         cout<<"     - Mjesec: ";
         getline(cin, mm, '\n');
         new_event.mm = convert_string(mm);
         if ( mm == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
         cout<<"     - Godina: ";
         getline(cin, yy, '\n');
         new_event.yy = convert_string(yy);
         if ( yy == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
+        }
+
+        if ( yy == "-1" && mm == "-1" && dd == "-1" ){
+            new_event.dd = new_event.mm = new_event.yy = -1;
+            break;
         }
 
         if ( !new_event.flag_day() ){
@@ -126,7 +161,7 @@ EVENT add_event(int type){
         if ( !new_event.flag_date() ){
             print_text("\nDATUM");
         }
-    }while ( !new_event.flag_day() || !new_event.flag_month() || !new_event.flag_year() || !new_event.flag_date() );
+    }while ( !new_event.flag_day() || !new_event.flag_month() || !new_event.flag_year()  || !new_event.flag_date() );
 
     /*------------ UNOSENJE VREMENA DOGADJAJA ------------*/
     cout<<"Vrijeme: \n";
@@ -135,15 +170,21 @@ EVENT add_event(int type){
         getline(cin, hh, '\n');
         new_event.hh = convert_string(hh);
         if ( hh ==  "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
         }
         cout<<"     - Minute: ";
         getline(cin, mi, '\n');
         new_event.mi = convert_string(mi);
         if ( mi == "EXIT" ){
-            new_event.dd = -1;
+            new_event.dd = 9999;
             return new_event;
+        }
+
+
+        if ( hh == "-1" && mi == "-1" ){
+            new_event.mi = new_event.hh = -1;
+            break;
         }
 
         if ( !new_event.flag_hh() ){
