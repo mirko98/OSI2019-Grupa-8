@@ -141,7 +141,7 @@ EVENT add_event(int type){
             return new_event;
         }
 
-        if ( yy == "-1" && mm == "-1" && dd == "-1" ){
+        if ( yy == "-1" && mm == "-1" && dd == "-1" && !type ){
             new_event.dd = new_event.mm = new_event.yy = -1;
             break;
         }
@@ -182,7 +182,7 @@ EVENT add_event(int type){
         }
 
 
-        if ( hh == "-1" && mi == "-1" ){
+        if ( hh == "-1" && mi == "-1" && !type ){
             new_event.mi = new_event.hh = -1;
             break;
         }
