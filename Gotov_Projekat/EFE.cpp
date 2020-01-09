@@ -171,6 +171,7 @@ void delete_type(){
     }
 
     if ( !buff1.size() ){
+        cout<<"POSTO NEMA NIJEDNE KATEGORIJE U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
         return;
     }
 
@@ -268,12 +269,20 @@ EVENT add_event(int type){
     FILE *fp = fopen("type_category.dat", "rb");
 
     char buff[100];
+    int br = 0;
     map <string, bool> flag;
 
     while ( fread(buff, sizeof(buff), 1, fp) ){
         cout<<"     - "<<buff<<endl;
         string buff1 = buff;
         flag[buff1] = true;
+        br++;
+    }
+
+    if ( !br ){
+        cout<<"POSTO NEMA NIJEDNE KATEGORIJE U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        new_event.dd = 9999;
+        return new_event;
     }
 
     fclose(fp);
@@ -431,6 +440,11 @@ void delete_event(const vector <EVENT> &niz){
 
     print_event_all(niz);
 
+    if ( !niz.size() ){
+        cout<<"POSTO NEMA NIJEDNOG DOGADJAJA U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        return;
+    }
+
     string choise;
     int broj = -1;
     do{
@@ -468,6 +482,11 @@ void mod_event(vector <EVENT> &niz){
 
     print_event_all(niz);
 
+    if ( !niz.size() ){
+        cout<<"POSTO NEMA NIJEDNOG DOGADJAJA U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        return;
+    }
+
     string choise;
     int broj = -1;
     do{
@@ -493,18 +512,26 @@ void mod_event(vector <EVENT> &niz){
         return;
     }
 
-    if ( buff.name[0] != '-' && buff.name[1] != '1' && buff.name[2] != '\0' ){
+    choise = buff.name;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].name, buff.name);
     }
-    if ( buff.location[0] != '-' && buff.location[1] != '1' && buff.location[2] != '\0' ){
+
+    choise = buff.location;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].location, buff.location);
     }
-    if ( buff.description[0] != '-' && buff.description[1] != '1' && buff.description[2] != '\0' ){
+
+    choise = buff.description;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].description, buff.description);
     }
-    if ( buff.type[0] != '-' && buff.type[1] != '1' && buff.type[2] != '\0' ){
+
+    choise = buff.type;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].type, buff.type);
     }
+
     if ( buff.dd != -1 ){
         niz[broj-1].dd = buff.dd;
     }
@@ -537,13 +564,13 @@ void mod_event(vector <EVENT> &niz){
 
         int buff_broj;
         do{
-            cout<<"Unesite redni broj: ";
+            cout<<"Unesite redni broj komentara koji zelite da obrisete: ";
 
             getline(cin, choise, '\n');
 
             buff_broj = convert_string(choise);
 
-            if ( choise == "EXIT" ){
+            if ( choise == "EXIT" || choise == "-1" ){
                 return;
             }
 
@@ -661,6 +688,7 @@ void print_event_today(const vector <EVENT> &niz){
 
 //ISPISUJE DOGADJAJE PO ODABRATOJ KATEGORIJI , POZIVA FUNKCIJA ZA ISPIS DOGADJAJA SAMO ZA NIZ SA ODGOVARAJOM KATEGORIJOM
 void print_event_category(const vector <EVENT> &niz, string &type){
+    cout<<type<<endl;
     cout<<"DOGADJAJI KATEGORIJE "<<type<<" SU: "<<endl<<endl;
 
     vector <EVENT> buff;
@@ -961,15 +989,16 @@ bool admin_acess(){
         cout<<"     - Ime: ";
         getline(cin, name, '\n');
 
-        if ( !check_admin_login(name) ){
+        if ( !check_admin_login(name) || name.length() < 3 || name.length() > 100 ){
             print_text("\nIME NALOGA");
         }
-    }while ( !check_admin_login(name) );
+    }while ( !check_admin_login(name) || name.length() < 3 || name.length() > 100 );
 
+    int poz = 0;
     do{
         char c;
-        int poz = 0;
         cout<<"     - Sifra: ";
+        poz = 0;
 
         while (1){
             c=getch();
@@ -991,10 +1020,10 @@ bool admin_acess(){
         password[poz] = '\0';
 
         pass_buff = password;
-        if ( !check_admin_login(pass_buff) ){
+        if ( !check_admin_login(pass_buff) || poz < 6 || poz > 100 ){
             print_text("\nSIFRU");
         }
-    }while( !check_admin_login(pass_buff) );
+    }while( !check_admin_login(pass_buff) || poz < 6 || poz > 100 );
 
     FILE *fp = fopen("ADMIN.dat", "rb");
 
@@ -1032,38 +1061,71 @@ bool check_admin_login(string &a){
 
 //UKOLIKO ZELI DA VIDI OGRANICENJA I KAKO KORISTITI
 void help(){
-    cout<<"POMOC PRI PRIJAVI ADMINISTRATORA NA SISTEM"<<endl;
+    cout<<endl<<"   POMOC PRI PRIJAVI ADMINISTRATORA NA SISTEM\n"<<endl;
     cout<<"     - Administrator mora postovati strogo definisana pravila pri prijavljivanju na sistem."<<endl;
-    cout<<"     - Korisnicko ime se mora sastojati od 3 do 40 karaktera, dok se lozinka mora sastojati od 6 do 20 karaktera. "<<endl;
-    cout<<"     - Ukoliko uneseni podaci ne zadovoljaju odredjene opsege, sistem od korisnika trazi da ponovo unese podatke."<<endl;
+    cout<<"     - Korisnicko ime se mora sastojati od 3 do 100 karaktera, dok se lozinka mora sastojati"<<endl;
+    cout<<"       od 6 do 100 karaktera. "<<endl;
+    cout<<"     - Za sifru i ime se mogu koristiti samo cifre i slova a-z(takodje vazi za velika slova)."<<endl;
+    cout<<"     - Ukoliko uneseni podaci ne zadovoljaju odredjene opsege, sistem od korisnika trazi da"<<endl;
+    cout<<"       ponovo unese podatke."<<endl;
 
-    cout<<endl<<"POMOC PRI UNOSU INFORMACIJA O DOGADJAJU"<<endl;
-    cout<<"     - Unose se informacije o dogadjaju kao sto su naziv, opis, vrsta, lokacija i datum odrzavanja dogadjaja."<<endl;
-    cout<<"     - Takodje se ostavlja mogucnost korisnicima da komentarisu odredjeni dogadjaj. Naziv dogadjaja se mora sastojati od 3 do 100 karaktera."<<endl;
+    cout<<endl<<"   POMOC PRI UNOSU INFORMACIJA O DOGADJAJU\n"<<endl;
+    cout<<"     - Unose se informacije o dogadjaju kao sto su naziv, opis, vrsta, lokacija i datum"<<endl;
+    cout<<"       odrzavanja dogadjaja."<<endl;
+    cout<<"     - Takodje se ostavlja mogucnost korisnicima da komentarisu odredjeni dogadjaj. Naziv"<<endl;
+    cout<<"       dogadjaja se mora sastojati od 3 do 100 karaktera."<<endl;
     cout<<"     - Opis ogranicavamo na opseg 10-1000 karaktera."<<endl;
-    cout<<"     - Pri unosu lokacije dogadjaja zahtjeva se da unos bude u opsegu 2-100 karaktera, dok je duzina komentara ogranicena na opseg 1-1000 karaktera."<<endl;
-    cout<<"     - Datum dogadjaja mora da bude validan, tj. da se navede da ce se dogadjaj dogoditi u buducnosti (najranije sutradan), inace ce sistem prikazivati gresku."<<endl;
-    cout<<"     - Ukoliko uneseni podaci ne zadovoljaju odredjene opsege i nisu validni, sistem od korisnika trazi da ponovo unese podatke."<<endl;
+    cout<<"     - Pri unosu vrste i lokacije dogadjaja zahtjeva se da unos bude u opsegu 2-100"<<endl;
+    cout<<"       karaktera, dok je duzina komentara ogranicena na opseg 1-1000 karaktera."<<endl;
+    cout<<"     - Datum dogadjaja mora da bude validan, tj. da se navede da ce se dogadjaj dogoditi u"<<endl;
+    cout<<"       buducnosti (najranije sutradan), inace ce sistem prikazivati gresku."<<endl;
+    cout<<"     - Ukoliko uneseni podaci ne zadovoljaju odredjene opsege i nisu validni, sistem od"<<endl;
+    cout<<"       korisnika trazi da ponovo unese podatke."<<endl;
 
-    cout<<endl<<"POMOC PRI IGRANJU KVIZA "<<endl;
-    cout<<"     - Duzina pitanja mora ispostovati opseg koji iznosi 3-1000 karaktera. Na svako pitanje moraju biti ponudjena tri odgovora ciju duzinu takodje ogranicavamo na 3-1000 karaktera."<<endl;
-    cout<<"     - Korisnik na pitanja odgovara tako sto upise odgovarajuci indeks koji stoji uz pitanje, za koje smatra da je tacno. Ukoliko se ne ispostuje odredjeni opseg, sistem trazi da se ponovo unesu podaci."<<endl;
+    cout<<endl<<"   POMOC PRI IGRANJU KVIZA\n"<<endl;
+    cout<<"     - Duzina pitanja mora ispostovati opseg koji iznosi 3-1000 karaktera. Na svako pitanje"<<endl;
+    cout<<"       moraju biti ponudjena tri odgovora ciju duzinu takodje ogranicavamo na 3-1000"<<endl;
+    cout<<"       karaktera."<<endl;
+    cout<<"     - Korisnik na pitanja odgovara tako sto upise odgovarajuci indeks koji stoji uz pitanje,"<<endl;
+    cout<<"       za koje smatra da je tacno. Ukoliko se ne ispostuje odredjeni opseg, sistem trazi da"<<endl;
+    cout<<"       se ponovo unesu podaci."<<endl;
 
-    cout<<endl<<"POMOC PRILIKOM DODAVANJA KOMENTARA"<<endl;
-    cout<<"     - Duzina komentara je ogranicena na opseg 1-1000 karaktera. Jedan dogadjaj moze imati maksimalno 100 komentara."<<endl;
-    cout<<"     - Ako komentar predstavlja neprikladan sadrzaj, administrator ima pravo da taj komentar ukloni."<<endl;
-    cout<<"     - Ukoliko jedan dogadjaj ima maksimalan broj komentara i korisnik zeli dodati komentar, taj komentar ide na mjesto najstarijeg komentara, a najstariji komentar se prethodno obrise."<<endl;
+    cout<<endl<<"   POMOC PRILIKOM DODAVANJA KOMENTARA\n"<<endl;
+    cout<<"     - Duzina komentara je ogranicena na opseg 1-1000 karaktera. Jedan dogadjaj moze imati"<<endl;
+    cout<<"       maksimalno 100 komentara."<<endl;
+    cout<<"     - Ako komentar predstavlja neprikladan sadrzaj, administrator ima pravo da taj"<<endl;
+    cout<<"       komentar ukloni."<<endl;
+    cout<<"     - Ukoliko jedan dogadjaj ima maksimalan broj komentara i korisnik zeli dodati komentar,"<<endl;
+    cout<<"       taj komentar ide na mjesto najstarijeg komentara, a najstariji komentar se prethodno"<<endl;
+    cout<<"       obrise."<<endl;
 
-    cout<<endl<<"POMOC PRI BRISANJU DOGADJAJA"<<endl;
+    cout<<endl<<"   POMOC PRI BRISANJU DOGADJAJA\n"<<endl;
     cout<<"     - Mogucnost brisanja dogadjaja imaju samo administratori sistema."<<endl;
-    cout<<"     - Pri odabiru ove opcije, administratoru ce biti prikazani svi dogadjaji pri cemu ce kraj svakog dogadjaja biti odgovarajuci indeks (koji je za svaki dogadjaj jedinstven)."<<endl;
-    cout<<"     - Nakon ovoga, trazice se od administratora da unese vrijednost indeksa dogadjaja koji zeli da obrise. "<<endl;
-    cout<<"     - Ukoliko unos naredbe nije dobar, odnosno indeks nije vazeci, onda ce administratoru biti prikazana odgovarajuca poruka, pri cemu ce se traziti od administrator da ponovo unese indeks dogadjaja koji zeli da obrise."<<endl;
+    cout<<"     - Pri odabiru ove opcije, administratoru ce biti prikazani svi dogadjaji pri cemu ce"<<endl;
+    cout<<"       kraj svakog dogadjaja biti odgovarajuci indeks (koji je za svaki dogadjaj"<<endl;
+    cout<<"       jedinstven)."<<endl;
+    cout<<"     - Nakon ovoga, trazice se od administratora da unese vrijednost indeksa dogadjaja"<<endl;
+    cout<<"       koji zeli da obrise. "<<endl;
+    cout<<"     - Ukoliko unos naredbe nije dobar, odnosno indeks nije vazeci, onda ce"<<endl;
+    cout<<"       administratoru biti prikazana odgovarajuca poruka, pri cemu ce se traziti od"<<endl;
+    cout<<"       administrator da ponovo unese indeks dogadjaja koji zeli da obrise."<<endl;
 
-    cout<<endl<<"POMOC PRI MODIFIKACIJI DOGADJAJA"<<endl;
-    cout<<"     - Prilikom modifikacije dogadjaja, otvara se isti prozor kao prilikom unosa informacija o dogadjaju. 	Ukoliko neko polje, koje predstavlja informaciju o dogadjaju, ne zelimo izmijeniti, na to polje unosimo vrijednost -1 i sistem automatski prelazi na sljedece polje. "<<endl;
-    cout<<"     - I u ovom slucaju sistem trazi da se odgovarajuci opseg ispostuje, inace sistem javlja gresku i trazi da se ponovo unesu podaci."<<endl;
-    cout<<"     - Prilikom unosenja rijeci EXIT u bilo kojoj funkciji, osim u funkciji za prijavu administratora na sistem, automatski se izlazi iz funkcije i korisnika vraca na glavni meni."<<endl;
+    cout<<endl<<"   POMOC PRI MODIFIKACIJI DOGADJAJA\n"<<endl;
+    cout<<"     - Prilikom modifikacije dogadjaja, otvara se isti prozor kao prilikom unosa informacija"<<endl;
+    cout<<"       o dogadjaju. Ukoliko neko polje, koje predstavlja informaciju o dogadjaju, ne zelimo"<<endl;
+    cout<<"       izmijenitina to polje unosimo vrijednost -1 i sistem automatski prelazi na sljedece"<<endl;
+    cout<<"       polje. "<<endl;
+    cout<<"       -Izuzetak je modifikacija datuma i vremena. Ako zelimo promijeniti jedno polje, datuma"<<endl;
+    cout<<"       ili vremena (minut, sat, dan, mjesec, godina) moramo sva polja ponovo popuniti"<<endl;
+    cout<<"       odgovarajucim vrijednostima. Ne smijemo jedno polje promijeniti, a na ostala (koja ne"<<endl;
+    cout<<"       zelimo promijeniti) unijeti -1. Tada ce sistem prikazati gresku."<<endl;
+    cout<<"     - I u ovom slucaju sistem trazi da se odgovarajuci opseg ispostuje, inace sistem javlja"<<endl;
+    cout<<"       gresku i trazi da se ponovo unesu podaci."<<endl;
+
+    cout<<endl<<"   EXIT\n"<<endl;
+    cout<<"     - Prilikom unosenja rijeci EXIT u bilo kojoj funkciji, osim u funkciji za prijavu"<<endl;
+    cout<<"       administratora na sistem, automatski se izlazi iz funkcije i korisnika vraca na glavni"<<endl;
+    cout<<"       meni."<<endl;
 }
 
 //KRITERIJUM SORTIRANJA PO NAZIVU
