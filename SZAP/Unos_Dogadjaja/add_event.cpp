@@ -58,12 +58,20 @@ EVENT add_event(int type){
     FILE *fp = fopen("type_category.dat", "rb");
 
     char buff[100];
+    int br = 0;
     map <string, bool> flag;
 
     while ( fread(buff, sizeof(buff), 1, fp) ){
         cout<<"     - "<<buff<<endl;
         string buff1 = buff;
         flag[buff1] = true;
+        br++;
+    }
+
+    if ( !br ){
+        cout<<"POSTO NEMA NIJEDNE KATEGORIJE U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        new_event.dd = 9999;
+        return new_event;
     }
 
     fclose(fp);
@@ -141,7 +149,7 @@ EVENT add_event(int type){
             return new_event;
         }
 
-        if ( yy == "-1" && mm == "-1" && dd == "-1" && !type ){
+        if ( yy == "-1" && mm == "-1" && dd == "-1" ){
             new_event.dd = new_event.mm = new_event.yy = -1;
             break;
         }
@@ -182,7 +190,7 @@ EVENT add_event(int type){
         }
 
 
-        if ( hh == "-1" && mi == "-1" && !type ){
+        if ( hh == "-1" && mi == "-1" ){
             new_event.mi = new_event.hh = -1;
             break;
         }
