@@ -3,6 +3,11 @@ void mod_event(vector <EVENT> &niz){
 
     print_event_all(niz);
 
+    if ( !niz.size() ){
+        cout<<"POSTO NEMA NIJEDNOG DOGADJAJA U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        return;
+    }
+
     string choise;
     int broj = -1;
     do{
@@ -28,18 +33,26 @@ void mod_event(vector <EVENT> &niz){
         return;
     }
 
-    if ( buff.name[0] != '-' && buff.name[1] != '1' && buff.name[2] != '\0' ){
+    choise = buff.name;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].name, buff.name);
     }
-    if ( buff.location[0] != '-' && buff.location[1] != '1' && buff.location[2] != '\0' ){
+
+    choise = buff.location;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].location, buff.location);
     }
-    if ( buff.description[0] != '-' && buff.description[1] != '1' && buff.description[2] != '\0' ){
+
+    choise = buff.description;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].description, buff.description);
     }
-    if ( buff.type[0] != '-' && buff.type[1] != '1' && buff.type[2] != '\0' ){
+
+    choise = buff.type;
+    if ( choise != "-1" ){
         strcpy(niz[broj-1].type, buff.type);
     }
+
     if ( buff.dd != -1 ){
         niz[broj-1].dd = buff.dd;
     }
@@ -72,13 +85,13 @@ void mod_event(vector <EVENT> &niz){
 
         int buff_broj;
         do{
-            cout<<"Unesite redni broj: ";
+            cout<<"Unesite redni broj komentara koji zelite da obrisete: ";
 
             getline(cin, choise, '\n');
 
             buff_broj = convert_string(choise);
 
-            if ( choise == "EXIT" ){
+            if ( choise == "EXIT" || choise == "-1" ){
                 return;
             }
 
