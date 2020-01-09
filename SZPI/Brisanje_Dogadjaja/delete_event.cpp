@@ -3,6 +3,11 @@ void delete_event(const vector <EVENT> &niz){
 
     print_event_all(niz);
 
+    if ( !niz.size() ){
+        cout<<"POSTO NEMA NIJEDNOG DOGADJAJA U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+        return;
+    }
+
     string choise;
     int broj = -1;
     do{
