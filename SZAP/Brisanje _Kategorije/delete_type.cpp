@@ -13,6 +13,7 @@ void delete_type(){
     }
 
     if ( !buff1.size() ){
+        cout<<"POSTO NEMA NIJEDNE KATEGORIJE U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
         return;
     }
 
