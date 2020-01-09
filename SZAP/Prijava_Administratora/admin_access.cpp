@@ -8,15 +8,16 @@ bool admin_acess(){
         cout<<"     - Ime: ";
         getline(cin, name, '\n');
  
-        if ( !check_admin_login(name) ){
+        if ( !check_admin_login(name) || name.length() < 3 || name.length() > 100 ){
             print_text("\nIME NALOGA");
         }
-    }while ( !check_admin_login(name) );
+    }while ( !check_admin_login(name) || name.length() < 3 || name.length() > 100 );
  
+    int poz = 0;
     do{
         char c;
-        int poz = 0;
         cout<<"     - Sifra: ";
+        poz = 0;
  
         while (1){
             c=getch();
@@ -38,10 +39,10 @@ bool admin_acess(){
         password[poz] = '\0';
  
         pass_buff = password;
-        if ( !check_admin_login(pass_buff) ){
+        if ( !check_admin_login(pass_buff) || poz < 6 || poz > 100 ){
             print_text("\nSIFRU");
         }
-    }while( !check_admin_login(pass_buff) );
+    }while( !check_admin_login(pass_buff) || poz < 6 || poz > 100 );
  
     FILE *fp = fopen("ADMIN.dat", "rb");
  
