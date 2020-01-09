@@ -1,11 +1,11 @@
-#include "EFE.h"
+#include "EFE.H"
 
 int main()
 {
     vector <EVENT> niz;
     input_all(niz);
 
-    cout<<"DOBRODOSLI U eCity"<<endl<<endl;
+    cout<<"DOBRODOSLI U Events for Everyone"<<endl<<endl;
 
     BEGIN:
     cout<<"Prijava [1]"<<endl;
@@ -51,6 +51,7 @@ int main()
         }while ( !flag );
     }
 
+    MENI:
     choise = "-1";
     do{
         if ( flag ) cout<<endl;
@@ -105,31 +106,48 @@ int main()
         if ( flag_meni ){
             if ( buff == 1 ) print_event_today(niz);
             else if ( buff == 2 ) {
-                FILE *fp = fopen("type_category.dat", "rb");
-
-                char buff1[100];
+                map <string, bool> buff1;
+                vector <string> arr;
                 int br = 1;
                 cout<<"Kategorije: "<<endl;
-                while ( fread(buff1, sizeof(buff1), 1, fp) ){
-                    cout<<"     - "<<buff1<<" ["<<br++<<"]"<<endl;
+                for (;br-1<(int)niz.size();br++){
+                    string buff2 = niz[br-1].type;
+                    if ( !buff1[buff2] ) {
+                        cout<<"     - "<<buff2<<" ["<<arr.size()+1<<"]"<<endl;
+                        arr.push_back(buff2);
+                    }
+                    buff1[buff2] = true;
+                }
+
+                if ( !niz.size() ){
+                    cout<<"POSTO NEMA NIJEDNOG DOGADJAJA U DATOTECI NIJE MOGUCE NASTAVITI OPERACIJU"<<endl<<endl;
+                    goto MENI;
                 }
 
                 string category;
                 do{
+                    if ( !arr.size() ){
+                        break;
+                        category = "EXIT";
+                    }
                     cout<<"Unesite redni broj: ";
                     getline(cin, category, '\n');
 
                     buff = convert_string(category);
 
-                    if ( buff < 1 || buff >= br ){
+                    if ( category == "EXIT" ){
+                        break;
+                    }
+
+                    if ( buff < 1 || buff >= (int)arr.size()+1 ){
                         print_text("\nREDNI BROJ");
                     }
-                }while ( buff < 1 || buff >= br );
+                }while ( buff < 1 || buff >= (int)arr.size()+1 );
 
-                fclose(fp);
-
-                category = buff1;
-                print_event_category(niz, category);
+                if ( category != "EXIT" ){
+                    category = arr[buff-1];
+                    print_event_category(niz, category);
+                }
             }
             else if ( buff == 3 ) print_event_future(niz);
             else if ( buff == 4 ) print_event_past(niz);
@@ -145,7 +163,11 @@ int main()
                 }else{
                     return 0;
                 }
-            }else if ( buff == 10 ) delete_event(niz);
+            }else if ( buff == 10 ) {
+                delete_event(niz);
+                niz.erase(niz.begin(), niz.end());
+                input_all(niz);
+            }
             else if ( buff == 11 ) mod_event(niz);
             else if ( buff == 12 ) add_type();
             else if ( buff == 13 ) delete_type();
