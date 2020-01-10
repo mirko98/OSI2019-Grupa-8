@@ -79,25 +79,6 @@ struct ADMIN{
     char password[100];
 };
 
-/*=================== SZAP ==================*/
-
-EVENT add_event(int);
-void mod_event(vector <EVENT> &);
-void delete_event(const vector <EVENT> &);
-void add_type();
-void delete_type();
-
-/*=================== SZPI ==================*/
-
-void input_all(vector <EVENT> &);
-void quiz();
-void input_comment(vector <EVENT> &);
-void print_event_all(const vector <EVENT> &);
-void print_event_past(const vector <EVENT> &);
-void print_event_today(const vector <EVENT> &);
-void print_event_category(const vector <EVENT> &, string &);
-void print_event_future(const vector <EVENT> &);
-
 /*============= SPOREDNE FUNKCIJE ===========*/
 
 bool sortby_time(const EVENT &, const EVENT &);
@@ -120,4 +101,30 @@ int get_hours();
 bool check_admin_login(string &);
 
 bool admin_acess();
+
+/*
+
+new_event.dd = 9999 da znam da je iz add_event izaslo na EXIT nacin i da mod_event treba da se vrati na main
+
+*/
+
+/*=================== SZAP ==================*/
+
+EVENT add_event(int);
+void mod_event(vector <EVENT> &);
+void delete_event(const vector <EVENT> &);
+void add_type();
+void delete_type();
+
+/*=================== SZPI ==================*/
+
+void input_all(vector <EVENT> &);
+void quiz();
+void input_comment(vector <EVENT> &);
+void print_event_all(const vector <EVENT> &);
+void print_event_past(const vector <EVENT> &);
+void print_event_today(const vector <EVENT> &);
+void print_event_category(const vector <EVENT> &, string &);
+void print_event_future(const vector <EVENT> &);
+
 
