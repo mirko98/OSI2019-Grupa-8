@@ -1,5 +1,7 @@
 #include "EFE.H"
 
+using namespace std;
+
 int main()
 {
     vector <EVENT> niz;
