@@ -9,14 +9,7 @@
 #include <conio.h>
 #include <algorithm>
 
-using std::cin;
-using std::string;
-using std::endl;
-using std::cout;
-using std::vector;
-using std::map;
-using std::ifstream;
-using std::max;
+using namespace std;
 
 /*=================== STRUKTURE ==================*/
 
